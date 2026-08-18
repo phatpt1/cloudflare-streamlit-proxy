@@ -11,6 +11,10 @@ export default {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống thi trắc nghiệm</title>
+    
+    <!-- DÒNG NÀY ĐỂ ĐỔI ICON WEB (FAVICON) -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135692.png" type="image/png">
+    
     <style>
         body, html {
             margin: 0;
