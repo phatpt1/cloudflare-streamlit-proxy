@@ -2,7 +2,6 @@ export default {
   async fetch(request) {
     const url = new URL(request.url);
     
-    // Ghép link gốc Streamlit cùng các tham số (nếu có), thêm lệnh ẩn menu Streamlit (embed=true)
     const targetUrl = `https://phatpt.streamlit.app${url.pathname}${url.search}${url.search ? '&' : '?'}embed=true`;
 
     const html = `<!DOCTYPE html>
@@ -10,10 +9,10 @@ export default {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống thi trắc nghiệm</title>
+    <title>Hệ thống Chia Sẻ Tri Thức của Phát Phan</title>
     
-    <!-- DÒNG NÀY ĐỂ ĐỔI ICON WEB (FAVICON) -->
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135692.png" type="image/png">
+    <!-- Icon Bot AI mới -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9095/9095835.png" type="image/png">
     
     <style>
         body, html {
