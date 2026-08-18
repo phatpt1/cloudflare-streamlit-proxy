@@ -1,6 +1,6 @@
 export default {
   async fetch(request) {
-    const targetUrl = "https://ehou-tinhoc.streamlit.app";
+    const targetUrl = "https://phatpt.streamlit.app";
     const url = new URL(request.url);
     const target = new URL(targetUrl);
 
