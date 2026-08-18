@@ -1,53 +1,41 @@
 export default {
   async fetch(request) {
-    try {
-      const url = new URL(request.url);
-      const target = "phatpt.streamlit.app";
-      
-      // Chuyển hướng domain
-      url.hostname = target;
-      url.protocol = "https:";
-      
-      // Xử lý Headers chuẩn để qua mặt lớp bảo vệ của Streamlit
-      const headers = new Headers(request.headers);
-      headers.set("Host", target);
-      headers.delete("Origin");
-      headers.delete("Referer");
+    const url = new URL(request.url);
+    
+    // Ghép link gốc Streamlit cùng các tham số (nếu có), thêm lệnh ẩn menu Streamlit (embed=true)
+    const targetUrl = `https://phatpt.streamlit.app${url.pathname}${url.search}${url.search ? '&' : '?'}embed=true`;
 
-      const init = {
-        method: request.method,
-        headers: headers,
-        redirect: "follow"
-      };
+    const html = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống thi trắc nghiệm</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe src="${targetUrl}" allow="clipboard-write; clipboard-read; autoplay" allowfullscreen></iframe>
+</body>
+</html>`;
 
-      // Chỉ gán body khi method hợp lệ (tránh lỗi ngầm 1101 của Cloudflare)
-      if (!["GET", "HEAD", "OPTIONS"].includes(request.method)) {
-        init.body = request.body;
-      }
-
-      // Thực hiện gửi Request tới Streamlit
-      const response = await fetch(url.toString(), init);
-
-      // --- XỬ LÝ ĐẶC BIỆT CHO STREAMLIT ---
-      
-      // 1. Nếu là kết nối WebSocket, tuyệt đối không can thiệp để tránh đứt gãy
-      if (response.status === 101 || response.headers.get("Upgrade") === "websocket") {
-        return response; 
-      }
-
-      // 2. Nếu là HTTP bình thường, tạo response mới và gỡ bỏ các khóa chặn Proxy
-      const modResponse = new Response(response.body, response);
-      modResponse.headers.delete("X-Frame-Options");
-      modResponse.headers.delete("Content-Security-Policy");
-      
-      return modResponse;
-
-    } catch (error) {
-      // Ép Worker in thẳng nguyên nhân gây lỗi ra màn hình (Không hiện trang 1101 nữa)
-      return new Response("🔥 Lỗi Worker nội bộ: " + error.message + "\n\n" + error.stack, { 
-        status: 500,
-        headers: { "Content-Type": "text/plain; charset=utf-8" }
-      });
-    }
+    return new Response(html, {
+      headers: { 
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-cache, no-store, must-revalidate"
+      },
+    });
   }
 };
